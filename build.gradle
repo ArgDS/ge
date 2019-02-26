@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+System.setProperty('file.encoding', 'UTF-8')
+
+group 'ru.argds.app.test'
+version '0.0.1'
+
+sourceCompatibility = 1.8
+
+def implPattern = ':impl:[\\w\\-]+-impl'
+def apiPattern = ':api:[\\w\\-]+-api'
+def standalonePattern = ':standalone:[\\w\\-]+'
+def utilsPattern = ':utils:[\\w\\-]+-utils'
+def corePattern = '(' + apiPattern + ')|(' + implPattern + ')|(' + standalonePattern + ')|(' + utilsPattern + ')'
+
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.8'
+        vcs = 'Git'
+    }
+}
+
+ext {
+    sourceEncoding = 'UTF-8'
+    compatibility = JavaVersion.VERSION_1_8
+}
+
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+configure(subprojects.findAll {it.path.matches(corePattern)}) {
+    apply plugin: 'java'
+    sourceCompatibility = compatibility
+    targetCompatibility = compatibility
+    compileJava.options.encoding = sourceEncoding
+    compileTestJava.options.encoding = sourceEncoding
+
+    configurations {
+        providedCompile
+        providedRuntime
+        providedRuntime.extendsFrom providedCompile
+    }
+
+    sourceSets {
+        main {
+            compileClasspath += configurations.providedCompile
+            runtimeClasspath += configurations.providedRuntime
+        }
+        test {
+            compileClasspath += configurations.providedCompile
+            runtimeClasspath += configurations.providedRuntime
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        
+    }
+}
+

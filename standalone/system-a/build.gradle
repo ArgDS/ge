@@ -1,0 +1,5 @@
+dependencies{
+    compile(project(':api:common-api'))
+    compile(project(':impl:common-impl'))
+    compile(project(':utils:common-utils'))
+}
